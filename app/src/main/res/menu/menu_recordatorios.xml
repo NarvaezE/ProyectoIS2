@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/itemRecordatorios"
+        android:title="Recordatorios" />
+    <item
+        android:id="@+id/itemMedicamentos"
+        android:title="Medicamentos" />
+    <item
+        android:id="@+id/itemReportes"
+        android:title="Reportes" />
+</menu>

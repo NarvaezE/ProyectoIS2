@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">ProyectoIS2</string>
+    <string name="title_activity_recordatorios">recordatorios</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="previous">Previous</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>\
+
+    <string name="form_registro">Registro de Usuario</string>
+    <string name="txtNombre">Ingrese su nombre</string>
+    <string name="txtApellido">Ingrese su apellido</string>
+    <string name="txtNickname">Ingrese su nickname</string>
+    <string name="txtEmail">Ingrese su correo</string>
+    <string name="txtContrasena">Ingrese su contraseña</string>
+    <string name="txtSpinner">Selecciona su tipo de usuario</string>
+    <string name="btnRegistro">Registrarse</string>
+    <string name="btnLogin">Iniciar Sesión</string>
+
+</resources>
