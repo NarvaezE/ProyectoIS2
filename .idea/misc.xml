@@ -3,16 +3,23 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Descargas/ProyectoIS2/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.224" />
+        <entry key="..\:/Descargas/ProyectoIS2/app/src/main/res/drawable/cuadrado.xml" value="0.116" />
+        <entry key="..\:/Descargas/ProyectoIS2/app/src/main/res/drawable/ic_launcher_background.xml" value="0.224" />
+        <entry key="..\:/Descargas/ProyectoIS2/app/src/main/res/layout/activity_detalles_meds.xml" value="0.3625" />
+        <entry key="..\:/Descargas/ProyectoIS2/app/src/main/res/layout/activity_editar_meds.xml" value="0.3484375" />
         <entry key="..\:/Descargas/ProyectoIS2/app/src/main/res/layout/activity_login_form.xml" value="0.33" />
-        <entry key="..\:/Descargas/ProyectoIS2/app/src/main/res/layout/activity_main.xml" value="0.2" />
-        <entry key="..\:/Descargas/ProyectoIS2/app/src/main/res/layout/activity_medicamentos.xml" value="0.3484375" />
+        <entry key="..\:/Descargas/ProyectoIS2/app/src/main/res/layout/activity_main.xml" value="0.33" />
+        <entry key="..\:/Descargas/ProyectoIS2/app/src/main/res/layout/activity_medicamentos.xml" value="0.3089887640449438" />
         <entry key="..\:/Descargas/ProyectoIS2/app/src/main/res/layout/activity_medicamentos_form.xml" value="0.5" />
         <entry key="..\:/Descargas/ProyectoIS2/app/src/main/res/layout/activity_recordatorios.xml" value="0.33" />
-        <entry key="..\:/Descargas/ProyectoIS2/app/src/main/res/layout/activity_recordatorios_form.xml" value="0.25" />
+        <entry key="..\:/Descargas/ProyectoIS2/app/src/main/res/layout/activity_recordatorios_form.xml" value="0.33" />
         <entry key="..\:/Descargas/ProyectoIS2/app/src/main/res/layout/activity_registro_form.xml" value="0.33" />
         <entry key="..\:/Descargas/ProyectoIS2/app/src/main/res/layout/activity_reportes.xml" value="0.1712962962962963" />
         <entry key="..\:/Descargas/ProyectoIS2/app/src/main/res/layout/fragment_first.xml" value="0.192481884057971" />
         <entry key="..\:/Descargas/ProyectoIS2/app/src/main/res/layout/fragment_second.xml" value="0.192481884057971" />
+        <entry key="..\:/Descargas/ProyectoIS2/app/src/main/res/layout/list_medicamentos.xml" value="0.33" />
+        <entry key="..\:/Descargas/ProyectoIS2/app/src/main/res/layout/tarjetamed.xml" value="0.2962962962962963" />
         <entry key="..\:/Descargas/ProyectoIS2/app/src/main/res/menu/menu_recordatorios.xml" value="0.3625" />
         <entry key="..\:/Descargas/ProyectoIS2/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.2705" />
       </map>
