@@ -126,7 +126,7 @@ public class RegistroForm extends AppCompatActivity {
 
                         progresDialog.dismiss();
                         startActivity(new Intent(RegistroForm.this,LoginForm.class));
-                        finish();
+
                     }
                     else{
                         Toast.makeText(RegistroForm.this, response, Toast.LENGTH_SHORT).show();

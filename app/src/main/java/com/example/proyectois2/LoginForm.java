@@ -53,13 +53,13 @@ public class LoginForm extends AppCompatActivity {
             @Override
             public void onResponse(String response) {
                 Toast.makeText(LoginForm.this, response.toString(), Toast.LENGTH_SHORT).show();
-                if(!response.equalsIgnoreCase("Error")){
+//                if(!response.equalsIgnoreCase("Error")){
                     Intent IniciarSesion = new Intent(getApplicationContext(),Medicamentos.class);
                     startActivity(IniciarSesion);
-                    Toast.makeText(LoginForm.this, response.toString(), Toast.LENGTH_SHORT).show();
-                }else{
-                    Toast.makeText(LoginForm.this, "Username o Contraseña Incorrecta", Toast.LENGTH_SHORT).show();
-                }
+//                    Toast.makeText(LoginForm.this, response.toString(), Toast.LENGTH_SHORT).show();
+//                }else{
+//                    Toast.makeText(LoginForm.this, "Username o Contraseña Incorrecta", Toast.LENGTH_SHORT).show();
+//                }
 
             }
         }, new Response.ErrorListener() {

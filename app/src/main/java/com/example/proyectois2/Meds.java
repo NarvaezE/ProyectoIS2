@@ -6,6 +6,8 @@ public class Meds {
     private String cantidad;
     private String tipoCatalogo;
 
+    public Meds() {
+    }
     public Meds(String nombre, String id, String cantidad, String tipoCatalogo) {
         this.nombre = nombre;
         this.id = id;
@@ -51,8 +53,7 @@ public class Meds {
     }
 
 
-    public Meds() {
-    }
+
 
 
 }
