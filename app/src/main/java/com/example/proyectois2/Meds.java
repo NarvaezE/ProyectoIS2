@@ -19,6 +19,9 @@ public class Meds {
     public String toString() {
         return nombre;
     }
+    public String verId(){
+        return id;
+    }
 
     public void setNombre(String nombre) {
         this.nombre = nombre;

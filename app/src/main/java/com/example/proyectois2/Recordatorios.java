@@ -14,6 +14,7 @@ public class Recordatorios extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.setTitle(R.string.tRecordatorios);
         setContentView(R.layout.activity_recordatorios);
     }
     public void agregarRecordatorio(View v) {
@@ -41,6 +42,9 @@ public class Recordatorios extends AppCompatActivity {
         }else if(id==R.id.itemReportes){
             startActivity(new Intent(getApplicationContext(),Reportes.class));
             Toast.makeText(this, "Reportes", Toast.LENGTH_SHORT).show();
+        }else if (id==R.id.cerrarSesion){
+            startActivity(new Intent(getApplicationContext(),MainActivity.class));
+            Toast.makeText(this, "Se ha cerrado la sesión", Toast.LENGTH_SHORT).show();
         }
         return super.onOptionsItemSelected(item);
     }

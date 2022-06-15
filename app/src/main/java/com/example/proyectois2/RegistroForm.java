@@ -35,6 +35,7 @@ public class RegistroForm extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registro_form);
+        this.setTitle(R.string.tRegistro);
 
         nombre = (EditText) findViewById(R.id.nombreR);
         apellido = (EditText) findViewById(R.id.apellido);

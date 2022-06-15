@@ -1,9 +1,9 @@
 package com.example.proyectois2;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,6 +25,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,184 +35,139 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Medicamentos extends AppCompatActivity {
+import cz.msebera.android.httpclient.Header;
 
-    ListView listView;
-    Adapter adapter;
-    public static ArrayList<Meds>medsArrayList=new ArrayList<>();
-    String url="https://ggabysgs.lucusvirtual.es/mostrar_medicamentos.php";
-    Meds meds;
+
+/*
+Programador: Edgar Narvaez
+Fecha: 10/06/22
+ */
+public class Medicamentos extends AppCompatActivity {
+    private AsyncHttpClient cliente;
+    private ListView listView;
+    private String [] catalogos= {"Seleccionar","Analgésicos","Laxantes", "Antiálergicos"
+            , "Antidiarreicos","Antiinflamatorios", "Antiinfecciosos","Mucolitícos"
+            , "Antipiréticos", "Antiulcerosos"};
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_medicamentos);
 
+        cliente=new AsyncHttpClient();
         listView=findViewById(R.id.listMeds);
-        adapter=new Adapter(this,medsArrayList);
-        listView.setAdapter(adapter);
+        this.setTitle(R.string.tMedicamentos);
+        listarMedicamentos();
+    }
 
-        listView.setOnItemClickListener((parent, view,  position, id) -> {
+    private void listarMedicamentos(){
+        String url="https://ggabysgs.lucusvirtual.es/mostrar_medicamentos.php";
+        cliente.post(url, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                if (statusCode==200){
+                    cargarLista(new String(responseBody));
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
-            ProgressDialog progressDialog = new ProgressDialog(view.getContext());
+                }
+            }
 
-            CharSequence[] dialogItem = {"Detalles","Editar","Eliminar"};
-            builder.setTitle(medsArrayList.get(position).getNombre());
-            builder.setItems(dialogItem, new DialogInterface.OnClickListener() {
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+
+            }
+        });
+
+    }
+    private void cargarLista(String respuesta){
+        ArrayList <Meds> lista=new ArrayList<Meds>();
+        try {
+            JSONArray jsonArray = new JSONArray(respuesta);
+            for(int i=0;i<jsonArray.length();i++){
+                Meds m=new Meds();
+                m.setId(jsonArray.getJSONObject(i).getString("idMEDICAMENTOS"));
+                m.setNombre(jsonArray.getJSONObject(i).getString("nombre"));
+                m.setCantidad(jsonArray.getJSONObject(i).getString("cantidad"));
+                m.setTipoCatalogo(jsonArray.getJSONObject(i).getString("tipoCatalogo"));
+                lista.add(m);
+            }
+            ArrayAdapter<Meds> adaptador=new ArrayAdapter<Meds>(this, android.R.layout.simple_list_item_1,lista);
+            listView.setAdapter(adaptador);
+
+            listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                 @Override
-                public void onClick(DialogInterface dialog, int i) {
+                public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    final Meds m = lista.get(i);
+                    android.app.AlertDialog.Builder a = new android.app.AlertDialog.Builder(Medicamentos.this);
+                    a.setCancelable(true);
+                    a.setTitle("PREGUNTA");
+                    a.setMessage("¿Desea Eliminar El Producto "+m.getNombre()+"?");
 
-                    switch (i){
+                    a.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
 
-                        case 0:
+                        }
+                    });
 
-                            startActivity(new Intent(getApplicationContext(),detallesMeds.class)
-                                    .putExtra("position",position));
+                    a.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
 
-                            break;
+                            String url = "https://ggabysgs.lucusvirtual.es/eliminar_med.php?idMEDICAMENTOS="+m.getId();
+                            cliente.post(url, new AsyncHttpResponseHandler() {
+                                @Override
+                                public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                                    if(statusCode == 200){
+                                        Toast.makeText(Medicamentos.this, "Producto Eliminado Correctamente!!", Toast.LENGTH_SHORT).show();
+                                        try {
+                                            Thread.sleep(2000);
+                                        } catch (InterruptedException e) {
+                                            e.printStackTrace();
+                                        }
+                                        listarMedicamentos();
+                                    }
+                                }
 
-                        case 1:
-                            startActivity(new Intent(getApplicationContext(),editarMeds.class)
-                                    .putExtra("position",position));
+                                @Override
+                                public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
 
-                            break;
+                                }
+                            });
 
-                        case 2:
+                        }
+                    });
 
-                            deleteData(medsArrayList.get(position).getId());
-
-                            break;
-
-
-                    }
-
-
-
+                    a.show();
+                    return true;
                 }
             });
 
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    Meds m = lista.get(i);
 
-            builder.create().show();
+                    StringBuffer b = new StringBuffer();
+                    b.append("ID: " + m.getId() + "\n");
+                    b.append("NOMBRE: " + m.getNombre() + "\n");
+                    b.append("CANTIDAD: " + m.getCantidad() + "\n");
+                    b.append("CATEGORIA: " + catalogos[Integer.parseInt(m.getTipoCatalogo())]);
 
+                    android.app.AlertDialog.Builder a = new AlertDialog.Builder(Medicamentos.this);
+                    a.setCancelable(true);
+                    a.setTitle("Detalle");
+                    a.setMessage(b.toString());
+                    a.setIcon(R.drawable.okk);
+                    a.show();
+                }
+            });
 
-        });
-
-        retrieveData();
-
-
-    }
-
-    private void deleteData(final String id) {
-
-        StringRequest request = new StringRequest(Request.Method.POST, "https://arsltechmysql.000webhostapp.com/delete.php",
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-
-                        if(response.equalsIgnoreCase("Data Deleted")){
-                            Toast.makeText(Medicamentos.this, "Data Deleted Successfully", Toast.LENGTH_SHORT).show();
-                        }
-                        else{
-                            Toast.makeText(Medicamentos.this, "Data Not Deleted", Toast.LENGTH_SHORT).show();
-                        }
-
-
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(Medicamentos.this, error.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-
-                Map<String,String> params = new HashMap<String,String>();
-                params.put("id", id);
-                return params;
-            }
-        };
-
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(request);
-
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
     }
-
-    public void retrieveData(){
-        Toast.makeText(Medicamentos.this, "entra al retrieve", Toast.LENGTH_SHORT).show();
-        StringRequest request = new StringRequest(Request.Method.POST, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-
-                        medsArrayList.clear();
-                        try{
-                            Toast.makeText(Medicamentos.this, "entra al try", Toast.LENGTH_SHORT).show();
-                            JSONObject jsonObject = new JSONObject(response);
-                            String sucess = jsonObject.getString("1");
-                            JSONArray jsonArray = jsonObject.getJSONArray("datos");
-
-
-                            if(sucess.equals("1")){
-
-                                Toast.makeText(Medicamentos.this, "entra al if equals 1", Toast.LENGTH_SHORT).show();
-                                for(int i=0;i<jsonArray.length();i++){
-
-                                    Toast.makeText(Medicamentos.this, "entra al for", Toast.LENGTH_SHORT).show();
-                                    JSONObject object = jsonArray.getJSONObject(i);
-
-                                    String id = object.getString("idMEDICAMENTOS");
-                                    String nombre = object.getString("nombre");
-                                    String cantidad = object.getString("cantidad");
-                                    String tipoCatalogo = object.getString("tipoCatalogo");
-
-
-                                    meds = new Meds(id,nombre,cantidad,tipoCatalogo);
-                                    medsArrayList.add(meds);
-                                    adapter.notifyDataSetChanged();
-                                    Toast.makeText(Medicamentos.this, "entra al for", Toast.LENGTH_SHORT).show();
-
-
-                                    Toast.makeText(Medicamentos.this, "id:"+id+"\nnombre:"+nombre+"\ncantidad:"+cantidad+"tipoCatalogo:"+tipoCatalogo, Toast.LENGTH_SHORT).show();
-
-                                }
-
-
-
-                            }
-
-
-
-
-                        }
-                        catch (JSONException e){
-                            e.printStackTrace();
-                        }
-
-
-
-
-
-
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(Medicamentos.this, error.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(request);
-
-
-
-
-    }
-
-
 
     public void agregarMedicamento(View v) {
         startActivity(new Intent(getApplicationContext(),MedicamentosForm.class));
@@ -231,6 +190,9 @@ public class Medicamentos extends AppCompatActivity {
         }else if(id==R.id.itemReportes){
             startActivity(new Intent(getApplicationContext(),Reportes.class));
             Toast.makeText(this, "Reportes", Toast.LENGTH_SHORT).show();
+        }else if (id==R.id.cerrarSesion){
+            startActivity(new Intent(getApplicationContext(),MainActivity.class));
+            Toast.makeText(this, "Se ha cerrado la sesión", Toast.LENGTH_SHORT).show();
         }
         return super.onOptionsItemSelected(item);
     }

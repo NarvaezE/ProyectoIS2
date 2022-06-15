@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ProyectoIS2</string>
+    <string name="app_name">Med Reminder</string>
     <string name="title_activity_recordatorios">recordatorios</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
@@ -18,5 +18,12 @@
     <string name="txtSpinner">Selecciona su tipo de usuario</string>
     <string name="btnRegistro">Registrarse</string>
     <string name="btnLogin">Iniciar Sesión</string>
-
+<!--    titulos-->
+    <string name="tMedicamentos">Medicamentos</string>
+    <string name="tMedForm">Agregar Medicamentos</string>
+    <string name="tRecordatorios">Recordatorios</string>
+    <string name="tRecordForm">Agregar Recordatorio</string>
+    <string name="tRegistro">Registrarse</string>
+    <string name="tReportes">Reportes </string>
+    <string name="tLogin">Iniciar Sesion</string>
 </resources>

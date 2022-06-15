@@ -35,6 +35,7 @@ public class MedicamentosForm extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_medicamentos_form);
+        this.setTitle(R.string.tMedForm);
         //Asignamos las vistas a nuestros elementos del layout
         e1= (EditText) findViewById(R.id.e1);
         e2= (EditText) findViewById(R.id.e2);
@@ -52,7 +53,7 @@ public class MedicamentosForm extends AppCompatActivity {
             @Override
             public void onClick(View view){
                 crearMed();
-                startActivity(new Intent(MedicamentosForm.this, Medicamentos.class));
+                startActivity(new Intent(getApplicationContext(),Medicamentos.class));
             }
 
         });
@@ -66,29 +67,8 @@ public class MedicamentosForm extends AppCompatActivity {
         final String cantidad=e1.getText().toString();
         final ProgressDialog progressDialog=new ProgressDialog(this);
         progressDialog.setMessage("Cargando. Por favor Espere");
-//        String seleccion=spinnerMeds.getSelectedItem().toString();
-//        //se hace la validacion del id (int) que devolvera el catalogo
-//        if(seleccion=="Analgésicos"){
-//            aux="1";
-//        }else if(seleccion=="Laxantes"){
-//            aux="2";
-//        }else if(seleccion=="Antiálergicos"){
-//            aux="3";
-//        }else if(seleccion=="Antidiarreicos"){
-//            aux="4";
-//        }else if(seleccion=="Antiinflamatorios"){
-//            aux="5";
-//        }else if(seleccion=="Antiinfecciosos"){
-//            aux="6";
-//        }else if(seleccion=="Mucolitícos"){
-//            aux="7";
-//        }else if(seleccion=="Antipiréticos"){
-//            aux="8";
-//        }else if(seleccion=="Antiulcerosos"){
-//            aux="9";
-//        }
-        final int idCatalogo= spinnerMeds.getSelectedItemPosition();
-        final String tipoCatalogo=String.valueOf( spinnerMeds.getSelectedItem());
+
+        final String idCatalogo= String.valueOf(spinnerMeds.getSelectedItemPosition());
         if (nombre.isEmpty()){
             Toast.makeText(this, "Ingrese el nombre del medicamento", Toast.LENGTH_SHORT).show();
             return;
@@ -105,13 +85,7 @@ public class MedicamentosForm extends AppCompatActivity {
                         Toast.makeText(MedicamentosForm.this, "Se han agregado medicamentos", Toast.LENGTH_SHORT).show();
 
                         progressDialog.dismiss();
-                        Intent i =new Intent(getApplicationContext(),Medicamentos.class);
-                        i.putExtra("Nombre",nombre);
-                        i.putExtra("Cantidad",cantidad);
-                        i.putExtra("Categoria",tipoCatalogo);
-                        i.putExtra("idCatalogo",idCatalogo);
-                        startActivity(i);
-
+                        startActivity(new Intent(getApplicationContext(),Medicamentos.class));
                         finish();
                     }
                     else{
@@ -136,21 +110,13 @@ public class MedicamentosForm extends AppCompatActivity {
 
                 params.put("nombre",nombre);
                 params.put("cantidad",cantidad);
-                params.put("tipoCatalogo",tipoCatalogo);
-
-
-
+                params.put("tipoCatalogo",idCatalogo);
 
                 return params;
                 }
             };
-
-
         RequestQueue requestQueue = Volley.newRequestQueue(MedicamentosForm.this);
         requestQueue.add(request);
-
-
-
         }
 
     }
@@ -159,7 +125,6 @@ public class MedicamentosForm extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         finish();
-
     }
 
 

@@ -11,4 +11,7 @@
     <item
         android:id="@+id/itemReportes"
         android:title="Reportes" />
+    <item
+        android:id="@+id/cerrarSesion"
+        android:title="Cerrar Sesión" />
 </menu>

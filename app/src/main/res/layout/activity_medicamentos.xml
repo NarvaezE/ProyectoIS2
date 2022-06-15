@@ -27,7 +27,8 @@ tools:context=".Medicamentos">
         android:layout_marginBottom="30dp"
         android:backgroundTint="@color/teal_700"
         android:onClick="agregarMedicamento"
-        app:srcCompat="@android:drawable/ic_input_add" />
+        app:srcCompat="@android:drawable/ic_input_add"
+        tools:ignore="SpeakableTextPresentCheck" />
 
 
 </RelativeLayout>
