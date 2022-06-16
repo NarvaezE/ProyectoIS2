@@ -23,7 +23,7 @@
             android:text="@string/txtNombre" />
 
         <EditText
-            android:id="@+id/nombreR"
+            android:id="@+id/nicknameL"
             android:layout_width="305dp"
             android:layout_height="wrap_content"
             android:ems="10"

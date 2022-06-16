@@ -18,7 +18,7 @@
     <string name="txtSpinner">Selecciona su tipo de usuario</string>
     <string name="btnRegistro">Registrarse</string>
     <string name="btnLogin">Iniciar Sesión</string>
-<!--    titulos-->
+    <!--    titulos-->
     <string name="tMedicamentos">Medicamentos</string>
     <string name="tMedForm">Agregar Medicamentos</string>
     <string name="tRecordatorios">Recordatorios</string>

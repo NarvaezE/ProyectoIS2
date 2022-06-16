@@ -22,6 +22,7 @@ import android.text.InputType;
 import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -42,9 +43,11 @@ import cz.msebera.android.httpclient.Header;
 
 public class RecordatoriosForm extends AppCompatActivity {
     private TextView eFecha1,eFecha2,eHora,eRepetir;
+    private String idMedicina="1";
     private AsyncHttpClient cliente;
     private Spinner spMeds,spH;
-    private int hora, minuto, idMedicina=0;
+    private Button btnR;
+    private int hora, minuto;
     DatePickerDialog.OnDateSetListener setListener;
     DatePickerDialog.OnDateSetListener setListen;
     @Override
@@ -60,7 +63,7 @@ public class RecordatoriosForm extends AppCompatActivity {
         eFecha2=(EditText)findViewById(R.id.eFechaF);
         eHora=(EditText)findViewById(R.id.eHora);
         eRepetir=(EditText)findViewById(R.id.eRepeticiones);
-
+        btnR=(Button)findViewById(R.id.agregarRec);
         //Arreglo con horas que llena el spinnerHoras
         String [] horas= {"Seleccionar","01:00","02:00", "03:00"
                 , "04:00","05:00", "06:00","07:00", "08:00", "09:00",
@@ -73,8 +76,16 @@ public class RecordatoriosForm extends AppCompatActivity {
         fechaInicial();
         fechaFinal();
         horaInicial();
+        btnR.setOnClickListener(new View.OnClickListener(){
 
-        crearRecordatorio();
+            @Override
+            public void onClick(View view){
+                crearRecordatorio();
+                startActivity(new Intent(getApplicationContext(),Recordatorios.class));
+            }
+
+        });
+
     }
 
     public void crearRecordatorio(){
@@ -83,12 +94,13 @@ public class RecordatoriosForm extends AppCompatActivity {
         final String fechaF=eFecha2.getText().toString();
         final String horaDosis=spH.getSelectedItem().toString();
         final String repeticion=eRepetir.getText().toString();
+        String seleccion=spMeds.getSelectedItem().toString();
 //        Meds medi=new Meds();
 //        medi=spMeds.
         final ProgressDialog progressDialog=new ProgressDialog(this);
         progressDialog.setMessage("Cargando. Por favor Espere");
         //aun hace falta hacer que el metodo nos devuelva el id del medicamento
-        final String idMedicamento= obtenerIdMedicina(spMeds.getSelectedItem().toString());
+        final String idMd= obtenerIdMedicina(seleccion).toString();
         if (horaInicio.isEmpty()){
             Toast.makeText(this, "Seleccione una hora en la que iniciaran los recordatorios", Toast.LENGTH_SHORT).show();
             return;
@@ -111,8 +123,8 @@ public class RecordatoriosForm extends AppCompatActivity {
                 @Override
                 public void onResponse(String response) {
 
-                    if(response.equalsIgnoreCase("Se han agregado medicamentos")){
-                        Toast.makeText(RecordatoriosForm.this, "Se han agregado medicamentos", Toast.LENGTH_SHORT).show();
+                    if(response.equalsIgnoreCase("Se han agregado recordatorios")){
+                        Toast.makeText(RecordatoriosForm.this, "Se han agregado recordatorios", Toast.LENGTH_SHORT).show();
 
                         progressDialog.dismiss();
                         startActivity(new Intent(getApplicationContext(),Recordatorios.class));
@@ -141,9 +153,9 @@ public class RecordatoriosForm extends AppCompatActivity {
                     params.put("hora",horaInicio);
                     params.put("fecha_inicial",fechaI);
                     params.put("fecha_final",fechaF);
-//                    params.put("id_usuario",idUser);
+                    params.put("id_usuario","3");
                     params.put("repetir",repeticion);
-                    params.put("id_medicamentos",idMedicamento);
+                    params.put("id_medicamentos",idMd);
                     params.put("hora_dosis",horaDosis);
 
                     return params;
@@ -175,7 +187,7 @@ public class RecordatoriosForm extends AppCompatActivity {
 
                                 eHora.setText(DateFormat.format("HH:mm",c));
                             }
-                        },24,0,true
+                        },12,0,true
                 );
                 timePickerDialog.updateTime(hora,minuto);
                 //mostramos el timepickerdialog
@@ -279,8 +291,32 @@ public class RecordatoriosForm extends AppCompatActivity {
 
     private String obtenerIdMedicina(String seleccion){
         //crear este web service
-        String url="https://ggabysgs.lucusvirtual.es/obtener_idmed.php?nombre="+seleccion;
+        String url="https://ggabysgs.lucusvirtual.es/obtener_idmed.php?Nombre="+seleccion;
+        Toast.makeText(RecordatoriosForm.this, seleccion, Toast.LENGTH_SHORT).show();
+        cliente.post(url, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                if (statusCode==200){
 
-        return "2";
+                    try {
+                        JSONArray jsonArray = new JSONArray(responseBody);
+                        Toast.makeText(RecordatoriosForm.this, "idMedicamento :"+idMedicina, Toast.LENGTH_SHORT).show();
+                        Meds m=new Meds();
+                        m.setId(jsonArray.getJSONObject(0).getString("idMEDICAMENTOS"));
+                           idMedicina=m.getId();
+                        Toast.makeText(RecordatoriosForm.this, "idMedicamento -"+idMedicina, Toast.LENGTH_SHORT).show();
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+
+            }
+        });
+
+        return idMedicina;
     }
 }

@@ -17,7 +17,7 @@ public class Meds {
 
     @Override
     public String toString() {
-        return nombre;
+        return nombre+"\n"+cantidad;
     }
     public String verId(){
         return id;

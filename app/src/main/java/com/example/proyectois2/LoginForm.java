@@ -1,5 +1,4 @@
 package com.example.proyectois2;
-
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -16,72 +15,157 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.loopj.android.http.AsyncHttpClient;
+
+import com.loopj.android.http.AsyncHttpResponseHandler;
+
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import cz.msebera.android.httpclient.Header;
+
 public class LoginForm extends AppCompatActivity {
-    EditText nicknameL,contrasenaL;
+    EditText nicknameL;
+    EditText contrasenaL;
     Button enviarSesion;
+    private AsyncHttpClient cliente;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_form);
-        this.setTitle(R.string.tLogin);
+        nicknameL = (EditText) findViewById(R.id.nicknameL);
+        contrasenaL = (EditText) findViewById(R.id.contrasenaL);
+        enviarSesion = (Button) findViewById(R.id.enviarSesion);
+        cliente = new AsyncHttpClient();
 
-        relacionarVistas();
-        nicknameL.setText("");
-        contrasenaL.setText("");
-
-
-
-        enviarSesion.setOnClickListener(new View.OnClickListener(){
+        botonLogin();
+    }
+    private void botonLogin(){
+        enviarSesion.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
-//                Toast.makeText(LoginForm.this, nicknameL.getText()+"-"+contrasenaL.getText(), Toast.LENGTH_SHORT).show();
-                validarUsuario("https://ggabysgs.lucusvirtual.es/validar_login.php");
-            }
+            public void onClick(View view) {
+                if(nicknameL.getText().toString().isEmpty() || contrasenaL.getText().toString().isEmpty()){
+                    Toast.makeText(LoginForm.this, "Hay Campos En Blanco!!", Toast.LENGTH_SHORT).show();
+                    nicknameL.setText("");
+                    contrasenaL.setText("");
+                }else{
+                    String usu = nicknameL.getText().toString().replace(" ","%20");
+                    String pas = contrasenaL.getText().toString().replace(" ","%20");
+                    String url = "https://ggabysgs.lucusvirtual.es/validar_login.php?username="+usu+"&contrasena="+pas;
+                    cliente.post(url, new AsyncHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody) {
+                            if(statusCode == 200) {
+                                String respuesta = new String(responseBody);
+                                if (respuesta.equalsIgnoreCase("null")) {
+                                    Toast.makeText(LoginForm.this, "Error De Usuario y/o Contraseña!!", Toast.LENGTH_SHORT).show();
+                                    nicknameL.setText("");
+                                    contrasenaL.setText("");
+                                } else {
+                                    try {
+                                        JSONObject jsonObj = new JSONObject(respuesta);
+                                        Usuarios u = new Usuarios();
+                                        u.setId(jsonObj.getString("idUSUARIOS"));
+                                        u.setNombre(jsonObj.getString("Nombre"));
+                                        u.setApellido(jsonObj.getString("Apellido"));
+                                        u.setNick(jsonObj.getString("username"));
+                                        u.setCorreo(jsonObj.getString("correo"));
+                                        u.setContrasena(jsonObj.getString("contrasena"));
+                                        u.setId_tip(jsonObj.getString("rol"));
+                                        u.setId_tutor(jsonObj.getString("idTutor"));
+                                        Intent i = null;
+                                        Toast.makeText(LoginForm.this, u.getId_tip(), Toast.LENGTH_SHORT).show();
 
+                                        switch(u.getId_tip()){
+                                            case "1":
+                                                u.setNom_tip("Paciente");
+                                                Toast.makeText(LoginForm.this, u.getNom_tip(), Toast.LENGTH_SHORT).show();
+                                                i = new Intent(LoginForm.this,Medicamentos.class);
+                                                break;
+                                            case "2":
+                                                u.setNom_tip("Cuidador");
+                                                Toast.makeText(LoginForm.this, u.getNom_tip(), Toast.LENGTH_SHORT).show();
+
+                                                i = new Intent(LoginForm.this,MedicamentosTutor.class);
+                                                break;
+
+
+                                        }
+                                        i.putExtra("u",u);
+                                        startActivity(i);
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                            Toast.makeText(LoginForm.this, "Error Desconocido. Intentelo De Nuevo!!", Toast.LENGTH_SHORT).show();
+                            nicknameL.setText("");
+                            contrasenaL.setText("");
+                        }
+                    });
+                }
+            }
         });
     }
-    public void relacionarVistas(){
-        contrasenaL=(EditText)findViewById(R.id.contrasenaL);
-        enviarSesion=(Button)findViewById(R.id.enviarSesion);
-        nicknameL=(EditText)findViewById(R.id.nombreR);
-
-    }
-    private void validarUsuario (String URL){
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                Toast.makeText(LoginForm.this, response.toString(), Toast.LENGTH_SHORT).show();
-//                if(!response.equalsIgnoreCase("Error")){
-                    Intent IniciarSesion = new Intent(getApplicationContext(),Medicamentos.class);
-                    startActivity(IniciarSesion);
-//                    Toast.makeText(LoginForm.this, response.toString(), Toast.LENGTH_SHORT).show();
+//    private void botonLogin(){
+//        enviarSesion.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if(nicknameL.getText().toString().isEmpty() || contrasenaL.getText().toString().isEmpty()){
+//                    Toast.makeText(LoginForm.this, "Hay Campos En Blanco!!", Toast.LENGTH_SHORT).show();
+//                    nicknameL.setText("");
+//                    contrasenaL.setText("");
 //                }else{
-//                    Toast.makeText(LoginForm.this, "Username o Contraseña Incorrecta", Toast.LENGTH_SHORT).show();
-//                }
+//                    String usu = nicknameL.getText().toString().replace(" ","%20");
+//                    String pas = contrasenaL.getText().toString().replace(" ","%20");
+//                    String url = "https://ggabysgs.lucusvirtual.es/validar_login.php?username="+usu+"&contrasena="+pas;
+//
+//
+//                    @Override
+//                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+//                        if(statusCode == 200) {
+//                            String respuesta = new String(responseBody);
+//                            if (respuesta.equalsIgnoreCase("null")) {
+//                                Toast.makeText(LoginForm.this, "Error De Usuario y/o Contraseña!!", Toast.LENGTH_SHORT).show();
+//                                nicknameL.setText("");
+//                                contrasenaL.setText("");
+//                            } else {
+//                                try {
+//                                    JSONObject jsonObj = new JSONObject(respuesta);
+//                                    Usuarios u = new Usuarios();
+//                                    u.setId(jsonObj.getString("idUSUARIOS"));
+//                                    u.setNombre(jsonObj.getString("username"));
+//                                    u.setContrasena(jsonObj.getString("contrasena"));
+//                                    u.setId_tip(jsonObj.getString("rol"));
+//                                    Intent i = null;
+//                                    switch(u.getId_tip()){
+//
+//                                    }
+//                                    i.putExtra("u",u);
+//                                    startActivity(i);
+//                                } catch (Exception e) {
+//                                    e.printStackTrace();
+//                                }
+//                            }
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+//                        Toast.makeText(LoginForm.this, "Error Desconocido. Intentelo De Nuevo!!", Toast.LENGTH_SHORT).show();
+//                        nicknameL.setText("");
+//                        contrasenaL.setText("");
+//                    }
+//                });
+//            }
+//        }
+//    });
+//    }
 
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(LoginForm.this, error.toString(), Toast.LENGTH_SHORT).show();
-
-            }
-        }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String,String> parametros = new HashMap<String, String>();
-                parametros.put("username", nicknameL.getText().toString());
-                parametros.put("contrasena", contrasenaL.getText().toString());
-                return parametros;
-
-            }
-        };
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(stringRequest);
-
-    }
 }

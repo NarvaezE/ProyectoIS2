@@ -75,7 +75,10 @@ public class MedicamentosForm extends AppCompatActivity {
         }else if (e1.getText().toString().isEmpty()){
             Toast.makeText(this, "Ingrese una cantidad valida", Toast.LENGTH_SHORT).show();
             return;
-        }else {
+        }else if(spinnerMeds.getSelectedItem().toString().equalsIgnoreCase("Seleccionar")) {
+            Toast.makeText(this, "Seleccione un medicamento", Toast.LENGTH_SHORT).show();
+            return;
+        }else{
             progressDialog.show();
             StringRequest request=new StringRequest(Request.Method.POST, "https://ggabysgs.lucusvirtual.es/conexion.php", new Response.Listener<String>() {
                 @Override
